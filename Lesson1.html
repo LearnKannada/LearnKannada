@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="" />
+    <title> </title>
+    <style>
+      body {
+        margin: 0 auto;
+        width: 95vw;
+        text-align: center;
+      }
+      .PageHeader {
+        background-color: dimgray;
+        color: white;
+        height: 10vh;
+        margin-bottom: 20px;
+      }
+      .Instructions {
+        padding-bottom: 20px;
+        text-align: center;
+      }
+      .Navigation {
+        display: flex;
+        justify-content: space-between;
+      }
+      .Previous,
+      .Next {
+        border: 2px solid gray;
+        box-shadow: 2px 2px 4px black;
+        color: blue;
+        font-size: 1.25em;
+        width: 100px;
+      }
+      .Previous:hover,
+      .Next:hover {
+        background-color: blue;
+        color: white;
+      }
+      .Tips {
+        display: flex;
+        font-size: 24px;
+        font-style: italic;
+        justify-content: space-around;
+        margin-top: 10px;
+        margin-bottom: 5px;
+      }
+      .Tips > div {
+        flex-basis: 45%;
+      }
+      .QuesAnsArea {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      .Question,
+      .Answer {
+        border: 2px solid gray;
+        box-shadow: 2px 2px 4px black;
+        flex-basis: 45%;
+        font-size: 32px;
+        height: 50vh;
+      }
+      .Answer {
+        align-items: center;
+        vertical-align: middle;
+      }
+      #Question {
+        max-height: 45vh;
+        vertical-align: middle;
+        font-size: 3em;
+      }
+      .Options {
+        border: 2px solid gray;
+        box-shadow: 2px 2px 4px black;
+        flex-basis: 100%;
+        display: flex;
+        height: 15vh;
+        margin-top: 15px;
+        justify-content: center;
+        margin-left: 45px;
+        margin-right: 45px;
+      }
+
+      .Options > div {
+        border: 1px dashed gray;
+        box-shadow: 2px 2px 2px lightgray;
+        font: 3vw comic sans;
+        padding: 10px;
+        margin: 10px;
+        width: 25%;
+      }
+      .Scoring {
+        /* border: 1px dashed gray;
+            box-shadow:2px 2px 2px lightgray ; */
+        display: flex;
+        height: 8vh;
+        margin-top: 10px;
+        justify-content: center;
+      }
+      .Scoring > div {
+        font-size: 1em;
+        margin: 20px;
+        width: 100px;
+      }
+      #Correct {
+        font-size: 24px;
+        background-color: lightgreen;
+        /* border: 2px solid gray; */
+        box-shadow: 2px 2px 4px green;
+      }
+      #Incorrect {
+        font-size: 24px;
+        background-color: lightcoral;
+        /* border: 2px solid gray; */
+        box-shadow: 2px 2px 4px red;
+      }
+      .noAction {
+        pointer-events: none;
+      }
+    </style>
+    <script></script>
+  </head>
+  <body>
+    <!-- The view part = displays elements -->
+    <main>
+      <audio
+        id="R"
+        preload
+        src="https://assets.mixkit.co/sfx/preview/mixkit-one-man-clapping-482.mp3"
+      ></audio>
+      <audio
+        id="W"
+        preload
+        src="https://assets.mixkit.co/sfx/preview/mixkit-apartment-buzzer-bell-press-932.mp3"
+      ></audio>
+      <div class="PageHeader">
+        <h2>Kannada Learning Quiz</h2>
+        <div class="Instructions">
+          Seeing the english word displayed on the left side , identify the most
+          appropriate translation word from options displayed at the bottom, and
+          drag the most appropriate translation word to the answer box on the
+          right.
+        </div>
+      </div>
+
+      <div class="Navigation">
+        <div class="Previous" onclick="reset()">Reset</div>
+        <div class="Next" onclick="show()">Start</div>
+      </div>
+      <div class="Tips">
+        <div>Image Will Show in box below</div>
+        <div>Drag Answer to box below</div>
+      </div>
+      <div class="QuesAnsArea">
+        <div class="Question"><div id="Question"></div></div>
+        <div
+          class="Answer"
+          ondrop="drop(event)"
+          ondragover="allowDrop(event)"
+        ></div>
+        <div class="Options">
+          <div id="a" class="option" draggable="true" ondragstart="drag(event)">
+            Option A
+          </div>
+          <div id="b" class="option" draggable="true" ondragstart="drag(event)">
+            Option B
+          </div>
+          <div id="c" class="option" draggable="true" ondragstart="drag(event)">
+            Option C
+          </div>
+          <div id="d" class="option" draggable="true" ondragstart="drag(event)">
+            Option D
+          </div>
+        </div>
+      </div>
+      <div class="Scoring">
+        <div id="Correct">0</div>
+        <div id="Incorrect">0</div>
+      </div>
+    </main>
+    <footer></footer>
+
+    <!-- Javascript logic == the control  -->
+
+    <script>
+      // Pre defined array of objects containing the questions
+      R.volume = 0.25;
+      W.volume = 0.2;
+      var sentences = [
+        {
+          s: "Naanu",
+          pattern: ["Nani", "Nanu", "Naanu", "Neenu"],
+          englishword: "I/Me",
+        },
+        {
+          s: "Neenu",
+          pattern: ["Neevu", "Ninu", "Naanu", "Neenu"],
+          englishword: "You",
+        },
+        {
+          s: "Naavu",
+          pattern: ["Neebu", "Naavu", "Naanu", "Neenu"],
+          englishword: "We or I (respectfully)",
+        },
+        {
+          s: "Neevu",
+          pattern: ["Naavu", "Nivu", "Neevu", "Neenu"],
+          englishword: "You (respectfully)",
+        },
+        {
+          s: "Avanu",
+          pattern: ["Avanu", "Avaru", "Avallu", "Avani"],
+          englishword: "He (far away), singular",
+        },
+        {
+          s: "Avallu",
+          pattern: ["Avanu", "Avaru", "Avallu", "Avani"],
+          englishword: "She (far away), singular",
+        },
+        {
+          s: "Ivanu",
+          pattern: ["Avanu", "Avaru", "Avallu", "Ivanu"],
+          englishword: "He (near), singular",
+        },
+        {
+          s: "Ivallu",
+          pattern: ["Ivanu", "Avallu", "Ivallu", "Avani"],
+          englishword: "She (near), singular",
+        },
+        {
+          s: "Avaru",
+          pattern: ["Avanu", "Avaru", "Avallu", "Ivanu"],
+          englishword: " They (far) with respect",
+        },
+        {
+          s: "Ivaru",
+          pattern: ["Ivanu", "Avallu", "Ivallu", "Ivaru"],
+          englishword: "They (near) with respect",
+        },
+        {
+          s: "Namaskaara",
+          pattern: ["Namaskar", "Namaste", "Namaskaara", "Nomascara"],
+          englishword: "Hello",
+        },
+        {
+          s: "Chennagiddira",
+          pattern: [
+            "Chinagiddira",
+            "Chennagiddira",
+            "Channagiddira",
+            "Chinnagiddira",
+          ],
+          englishword: "How are you ?",
+        },
+        {
+          s: "Haudu naanu chennagiddini",
+          pattern: [
+            "Haudu naanu chennagiddini",
+            "Illa naanu chennagiddini",
+            "Avaru chennagiddini",
+            "Ivaru chennagiddini",
+          ],
+          englishword: "Boy: Yes I am fine",
+        },
+        {
+          s: "Haudu naanu chennagiddini",
+          pattern: [
+            "Haudu naanu chennagiddini",
+            "Illa naanu chennagiddini",
+            "Avaru chennagiddini",
+            "Ivaru chennagiddini",
+          ],
+          englishword: "Girl: Yes I am fine",
+        },
+        {
+          s: "Nanna",
+          pattern: ["Nanna", "Naanu", "Naani", "Nenna"],
+          englishword: "My/mine",
+        },
+        {
+          s: "Ninna",
+          pattern: ["Nanna", "Naanu", "Naani", "Ninna"],
+          englishword: "Your, singular",
+        },
+        {
+          s: "Nimma",
+          pattern: ["Nanna", "Naanu", "Naani", "Nimma"],
+          englishword: "Your, (with respect)",
+        },
+        {
+          s: "Hesaru",
+          pattern: ["Hesaru", "Hisaru", "Hosaru", "Husaru"],
+          englishword: "Name",
+        },
+        {
+          s: "Naanu Bharatiya",
+          pattern: [
+            "Nanna Bharatiya",
+            "Ninna Bharatiya",
+            "Naavu Bharatiya",
+            "Naanu Bharatiya",
+          ],
+          englishword: "Male: I am Indian",
+        },
+        {
+          s: "Naanu Bharatiya",
+          pattern: [
+            "Nanna Bharatiya",
+            "Ninna Bharatiyallu",
+            "Naavu Bharatiya",
+            "Naanu Bharatiyallu",
+          ],
+          englishword: "Female: I am Indian",
+        },
+      ];
+      // End of Pre defined array of objects containing the questions
+
+      // List of global variables being used across execution
+      var done = [];
+      var curr = 0;
+      var corrOpt = "";
+      var GuessOpt = [];
+      currenglishword = "";
+
+      // Start or Progress to Next in game
+      function show() {
+        document.getElementById("R").pause();
+        for (let m = 0; m < 4; m++) {
+          document.querySelector(".Options").children[m].innerHTML = "";
+        }
+        document.querySelector(".Previous").classList.remove("noAction");
+        if (document.querySelector(".Next").innerHTML == "Start")
+          document.querySelector(".Next").innerHTML = "Next";
+        if (sentences.length >= 1) {
+          document.querySelector(".Answer").style.color = "black";
+          document.querySelector(".Answer").style.backgroundColor = "white";
+          document.querySelector(".Answer").innerHTML = "";
+          curr = Math.floor(Math.random() * sentences.length);
+          corrOpt = sentences[curr].s;
+          console.log(sentences[curr]);
+          currenglishword = sentences[curr].englishword;
+          GuessOpt = scramble(sentences[curr].pattern);
+          for (let m = 0; m < GuessOpt.length; m++) {
+            document.querySelector(".Options").children[m].innerHTML =
+              GuessOpt[m];
+          }
+          document.getElementById("Question").textContent = currenglishword;
+        } else {
+          document.querySelector(".Next").disabled = true;
+          document.querySelector(".Answer").innerHTML =
+            "You have completed the sequence!";
+          for (let m = 0; m < GuessOpt.length; m++) {
+            document.querySelector(".Options").children[m].innerHTML = "";
+          }
+        }
+      } // end of Start or Progress to Next in game
+
+      // Function to randomize displayed options every time
+      function scramble(inp) {
+        let output = [];
+        let strtlen = inp.length;
+        for (let i = 0; i < strtlen; i++) {
+          let rnd = Math.floor(Math.random() * inp.length);
+          output.push(inp[rnd]);
+          inp.splice(inp.indexOf(inp[rnd]), 1);
+        }
+        return output;
+      }
+      // End of Function to randomize displayed options every time
+
+      // When element dragged, track its innerHTML and associate with variable called "text"
+      function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.innerHTML);
+      }
+
+      function allowDrop(ev) {
+        ev.preventDefault();
+      }
+
+      // When element dropped on targget, pass data through variable called "text" to target
+      function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        ev.target.innerHTML = data;
+        // If answer is correct visual indicator + Clap sound effect
+        if (data == corrOpt) {
+          document.getElementById("R").play();
+          document.querySelector(".Answer").style.backgroundColor = "green";
+          document.querySelector(".Answer").style.color = "white";
+          let j = sentences.splice(curr, 1);
+          document.getElementById("Correct").innerHTML =
+            parseInt(document.getElementById("Correct").innerHTML) + 1;
+          // Prevent reset of a Correct Answer to avoid duplicate Correct entries
+          document.querySelector(".Previous").classList.toggle("noAction");
+          // Auto move to next question on correct answer
+          setTimeout(show, 2000);
+        }
+        // If answer is Incorrect visual indicator + Buzzer sound effect
+        else {
+          document.getElementById("W").play();
+          document.querySelector(".Answer").style.backgroundColor = "red";
+          document.querySelector(".Answer").style.color = "black";
+          document.getElementById("Incorrect").innerHTML =
+            parseInt(document.getElementById("Incorrect").innerHTML) + 1;
+        }
+      }
+
+      // User reset functionality
+      function reset() {
+        document.querySelector(".Answer").style.color = "black";
+        document.querySelector(".Answer").style.backgroundColor = "white";
+        document.querySelector(".Answer").innerHTML = "";
+        corrOpt = sentences[curr].s;
+        currenglishword = sentences[curr].englishword;
+        document.querySelector(".Question").src = currenglishword;
+        GuessOpt = scramble(sentences[curr].pattern);
+        for (let m = 0; m < GuessOpt.length; m++) {
+          document.querySelector(".Options").children[m].innerHTML =
+            GuessOpt[m];
+        }
+      }
+      // End of User reset functionality
+    </script>
+  </body>
+</html>
